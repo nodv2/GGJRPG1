@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Engine.Models;
+﻿using System.Linq;
 using Engine.Factories;
+using Engine.Models;
 
 namespace Engine.ViewModels
 {
@@ -15,6 +10,7 @@ namespace Engine.ViewModels
 
         public World CurrentWorld { get; set; }
         public Player CurrentPlayer { get; set; }
+
         public Location CurrentLocation
         {
             get { return _currentLocation; }
@@ -27,6 +23,40 @@ namespace Engine.ViewModels
                 OnPropertyChanged(nameof(HasLocationToEast));
                 OnPropertyChanged(nameof(HasLocationToWest));
                 OnPropertyChanged(nameof(HasLocationToSouth));
+
+                GivePlayerQuestsAtLocation();
+            }
+        }
+
+        public bool HasLocationToNorth
+        {
+            get
+            {
+                return CurrentWorld.LocationAt(CurrentLocation.XCoordinate, CurrentLocation.YCoordinate + 1) != null;
+            }
+        }
+
+        public bool HasLocationToEast
+        {
+            get
+            {
+                return CurrentWorld.LocationAt(CurrentLocation.XCoordinate + 1, CurrentLocation.YCoordinate) != null;
+            }
+        }
+
+        public bool HasLocationToSouth
+        {
+            get
+            {
+                return CurrentWorld.LocationAt(CurrentLocation.XCoordinate, CurrentLocation.YCoordinate - 1) != null;
+            }
+        }
+
+        public bool HasLocationToWest
+        {
+            get
+            {
+                return CurrentWorld.LocationAt(CurrentLocation.XCoordinate - 1, CurrentLocation.YCoordinate) != null;
             }
         }
 
@@ -45,8 +75,6 @@ namespace Engine.ViewModels
             CurrentWorld = WorldFactory.CreateWorld();
 
             CurrentLocation = CurrentWorld.LocationAt(0, 0);
-
-           
         }
 
         public void MoveNorth()
@@ -81,37 +109,14 @@ namespace Engine.ViewModels
             }
         }
 
-
-
-        public bool HasLocationToNorth
+        private void GivePlayerQuestsAtLocation()
         {
-            get
+            foreach (Quest quest in CurrentLocation.QuestsAvailableHere)
             {
-                return CurrentWorld.LocationAt(CurrentLocation.XCoordinate, CurrentLocation.YCoordinate + 1) != null;
-            }
-        }
-
-        public bool HasLocationToEast
-        {
-            get
-            {
-                return CurrentWorld.LocationAt(CurrentLocation.XCoordinate + 1, CurrentLocation.YCoordinate) != null;
-            }
-        }
-
-        public bool HasLocationToSouth
-        {
-            get
-            {
-                return CurrentWorld.LocationAt(CurrentLocation.XCoordinate, CurrentLocation.YCoordinate - 1) != null;
-            }
-        }
-
-        public bool HasLocationToWest
-        {
-            get
-            {
-                return CurrentWorld.LocationAt(CurrentLocation.XCoordinate - 1, CurrentLocation.YCoordinate) != null;
+                if (!CurrentPlayer.Quests.Any(q => q.PlayerQuest.ID == quest.ID))
+                {
+                    CurrentPlayer.Quests.Add(new QuestStatus(quest));
+                }
             }
         }
     }
