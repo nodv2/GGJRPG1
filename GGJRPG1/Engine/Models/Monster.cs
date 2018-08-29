@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 
-namespace Engine.Models 
+namespace Engine.Models
 {
     public class Monster : BaseNotificationClass
     {
@@ -17,12 +12,14 @@ namespace Engine.Models
         public int HitPoints
         {
             get { return _hitPoints; }
-            private set
+            set
             {
                 _hitPoints = value;
                 OnPropertyChanged(nameof(HitPoints));
             }
         }
+        public int MinimumDamage { get; set; }
+        public int MaximumDamage { get; set; }
 
         public int RewardExperiencePoints { get; private set; }
         public int RewardGold { get; private set; }
@@ -30,13 +27,16 @@ namespace Engine.Models
         public ObservableCollection<ItemQuantity> Inventory { get; set; }
 
         public Monster(string name, string imageName,
-            int maximumHitPoints, int hitPoints,
-            int rewardExperiencePoints, int rewardGold)
+                       int maximumHitPoints, int hitPoints,
+                       int minimumDamage, int maxmumDamage,
+                       int rewardExperiencePoints, int rewardGold)
         {
             Name = name;
-            ImageName = string.Format("/Engine;component/Images/Monsters/{0}", imageName);
+            ImageName = $"/Engine;component/Images/Monsters/{imageName}";
             MaximumHitPoints = maximumHitPoints;
             HitPoints = hitPoints;
+            MinimumDamage = minimumDamage;
+            MaximumDamage = maxmumDamage;
             RewardExperiencePoints = rewardExperiencePoints;
             RewardGold = rewardGold;
 

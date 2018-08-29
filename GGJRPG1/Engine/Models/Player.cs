@@ -1,22 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine.Models
 {
     public class Player : BaseNotificationClass
     {
-        public string _name { get; set; }
-        public string _characterClass { get; set; }
-        public int _hitPoints { get; set; }
-        public int _experiencePoints { get; set; }
-        public int _level { get; set; }
-        public int _gold { get; set; }
+        #region Properties
 
+        private string _name;
+        private string _characterClass;
+        private int _hitPoints;
+        private int _experiencePoints;
+        private int _level;
+        private int _gold;
 
         public string Name
         {
@@ -79,7 +76,13 @@ namespace Engine.Models
         }
 
         public ObservableCollection<GameItem> Inventory { get; set; }
+
+        public List<GameItem> Weapons =>
+            Inventory.Where(i => i is Weapon).ToList();
+
         public ObservableCollection<QuestStatus> Quests { get; set; }
+
+        #endregion
 
         public Player()
         {
@@ -87,6 +90,11 @@ namespace Engine.Models
             Quests = new ObservableCollection<QuestStatus>();
         }
 
+        public void AddItemToInventory(GameItem item)
+        {
+            Inventory.Add(item);
 
+            OnPropertyChanged(nameof(Weapons));
+        }
     }
 }
